@@ -1,0 +1,160 @@
+<section class="app">
+  <header class="app__header">
+    <div class="brand">
+      <div class="brand__text">
+        <h1 class="brand__title">Books Application</h1>
+        <p class="brand__sub">Add, browse, and manage your library.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="app__main">
+    <!-- LEFT “MONITOR” — FORM -->
+    <section class="card card--form" aria-label="Add a book">
+      <div class="card__top">
+        <h2 class="card__title">Add a new book</h2>
+        <p class="card__hint">Reactive form with validation + animations.</p>
+      </div>
+
+      <form
+        class="formGrid"
+        [class.formGrid--shake]="shakeForm"
+        [formGroup]="bookForm"
+        (ngSubmit)="addBook()"
+        novalidate
+      >
+        <label class="field">
+          <span class="field__label">Title</span>
+          <input
+            class="field__input"
+            placeholder="e.g., Atomic Habits"
+            formControlName="title"
+            [class.is-invalid]="f['title'].touched && f['title'].invalid"
+          />
+          @if (f['title'].touched && f['title'].invalid) {
+            <small class="field__error">Title is required (min 2 chars).</small>
+          }
+        </label>
+
+        <label class="field field--wide">
+          <span class="field__label">Description</span>
+          <input
+            class="field__input"
+            placeholder="Short description..."
+            formControlName="desc"
+            [class.is-invalid]="f['desc'].touched && f['desc'].invalid"
+          />
+          @if (f['desc'].touched && f['desc'].invalid) {
+            <small class="field__error">Description is required (min 5 chars).</small>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">Price</span>
+          <input
+            class="field__input"
+            placeholder="e.g., 399"
+            inputmode="decimal"
+            formControlName="price"
+            [class.is-invalid]="f['price'].touched && f['price'].invalid"
+          />
+          @if (f['price'].touched && f['price'].invalid) {
+            <small class="field__error">Enter a valid price (numbers only).</small>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">Genre</span>
+          <input
+            class="field__input"
+            placeholder="e.g., Self-help"
+            formControlName="genre"
+            [class.is-invalid]="f['genre'].touched && f['genre'].invalid"
+          />
+          @if (f['genre'].touched && f['genre'].invalid) {
+            <small class="field__error">Genre is required.</small>
+          }
+        </label>
+
+        <label class="field field--wide">
+          <span class="field__label">Author</span>
+          <input
+            class="field__input"
+            placeholder="e.g., James Clear"
+            formControlName="author"
+            [class.is-invalid]="f['author'].touched && f['author'].invalid"
+          />
+          @if (f['author'].touched && f['author'].invalid) {
+            <small class="field__error">Author is required.</small>
+          }
+        </label>
+
+        <div class="actions field--wide">
+          <button
+            class="btn btn--primary"
+            type="submit"
+            [disabled]="bookForm.invalid || isSubmitting"
+          >
+            <span class="btn__spark" aria-hidden="true"></span>
+            <span class="btn__text">
+              {{ isSubmitting ? 'Adding…' : 'Add book' }}
+            </span>
+          </button>
+
+          <div class="miniMeta" aria-label="Book count">
+            <span class="pill">Total: {{ books?.length || 0 }}</span>
+            <span class="pill pill--soft">Reactive Forms</span>
+            <span class="pill pill--soft">MongoDB</span>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- RIGHT “MONITOR” — LIST -->
+    <section class="card card--list" aria-label="Books list">
+      <div class="card__top card__top--row">
+        <div>
+          <h2 class="card__title">Submitted books</h2>
+          <p class="card__hint">Scroll here like a second panel.</p>
+        </div>
+      </div>
+
+      <div class="card__scroll">
+        @for (book of books; track book.id) {
+          <article class="book" [style.animationDelay.ms]="$index * 35">
+            <div class="book__main">
+              <h3 class="book__title">
+                <span class="dot" aria-hidden="true"></span>
+                {{ book.title }}
+              </h3>
+
+              <p class="book__desc">{{ book.desc }}</p>
+
+              <div class="book__meta">
+                <span class="tag">₱ {{ book.price }}</span>
+                <span class="tag tag--soft">{{ book.genre }}</span>
+                <span class="tag tag--soft">{{ book.author }}</span>
+              </div>
+            </div>
+
+            <button class="btn btn--danger" type="button" (click)="deleteBook(book.id)">
+              Delete
+            </button>
+          </article>
+        } @empty {
+          <div class="empty">
+            <div class="empty__icon" aria-hidden="true">🗂️</div>
+            <p class="empty__title">No books available</p>
+            <p class="empty__sub">Add your first book using the form on the left.</p>
+          </div>
+        }
+      </div>
+    </section>
+  </main>
+
+  <footer class="app__footer">
+    <span class="footer__text">Built with Angular + Express + MongoDB Compass</span>
+  </footer>
+
+  <router-outlet />
+</section>
